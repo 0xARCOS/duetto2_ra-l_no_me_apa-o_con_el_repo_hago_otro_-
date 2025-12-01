@@ -1,0 +1,199 @@
+import React, { useState, useEffect } from 'react';
+import './DeckConfig.css';
+
+/**
+ * Componente DeckConfig - Configuración de mazos
+ *
+ * Permite editar:
+ * - Cantidad de cartas por mazo
+ * - Contenido de cada carta (palabras/emojis)
+ */
+const DeckConfig = ({ isOpen, onClose, wordCards, imageCards, onUpdateCards }) => {
+  const [activeTab, setActiveTab] = useState('words'); // 'words' o 'images'
+  const [editingWords, setEditingWords] = useState(wordCards);
+  const [editingImages, setEditingImages] = useState(imageCards);
+
+  // Sincronizar estados locales solo cuando se abra el modal (de cerrado a abierto)
+  useEffect(() => {
+    if (isOpen) {
+      setEditingWords([...wordCards]);
+      setEditingImages([...imageCards]);
+      setActiveTab('words'); // Resetear a tab de palabras al abrir
+    }
+  }, [isOpen]); // Solo depende de isOpen
+
+  if (!isOpen) return null;
+
+  const handleWordChange = (index, newContent) => {
+    // No permitir espacios en las palabras
+    if (newContent.includes(' ')) {
+      return;
+    }
+
+    // Limitar a 12 caracteres máximo por palabra individual
+    const validContent = newContent.length <= 10 ? newContent : editingWords[index].content;
+
+    const updated = [...editingWords];
+    updated[index] = { ...updated[index], content: validContent };
+    setEditingWords(updated);
+  };
+
+  const handleImageChange = (index, newContent) => {
+    // No permitir espacios
+    if (newContent.includes(' ')) {
+      return;
+    }
+
+    // Convertir a array de caracteres/emojis Unicode
+    const chars = [...newContent];
+
+    // Solo permitir 1 carácter o emoticono
+    if (chars.length > 1) {
+      return;
+    }
+
+    const updated = [...editingImages];
+    updated[index] = { ...updated[index], content: newContent, imageData: null };
+    setEditingImages(updated);
+  };
+
+  const handleImageFileChange = (index, file) => {
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const updated = [...editingImages];
+        updated[index] = { ...updated[index], content: '', imageData: e.target.result };
+        setEditingImages(updated);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = (index) => {
+    const updated = [...editingImages];
+    updated[index] = { ...updated[index], content: '❓', imageData: null };
+    setEditingImages(updated);
+  };
+
+  // Funciones de añadir/eliminar cartas eliminadas - los mazos siempre tienen 44 cartas
+
+  const handleSave = () => {
+    onUpdateCards(editingWords, editingImages);
+    onClose();
+  };
+
+  const handleCancel = () => {
+    setEditingWords(wordCards);
+    setEditingImages(imageCards);
+    onClose();
+  };
+
+  return (
+    <div className="config-overlay">
+      <div className="config-panel">
+        <div className="config-header">
+          <h2>⚙️ Configuración de Mazos</h2>
+          <button className="close-btn" onClick={handleCancel}>✕</button>
+        </div>
+
+        <div className="config-body">
+          <div className="config-tabs">
+            <button
+              className={`tab ${activeTab === 'words' ? 'active' : ''}`}
+              onClick={() => setActiveTab('words')}
+            >
+              📝 Palabras ({editingWords.length})
+            </button>
+            <button
+              className={`tab ${activeTab === 'images' ? 'active' : ''}`}
+              onClick={() => setActiveTab('images')}
+            >
+              🖼️ Imágenes ({editingImages.length})
+            </button>
+          </div>
+
+
+
+          <div className="cards-editor">
+            {activeTab === 'words' ? (
+              <div className="cards-list">
+                {editingWords.map((card, index) => (
+                  <div key={card.id} className="card-edit-row">
+                    <span className="card-number">{index + 1}</span>
+                    <input
+                      type="text"
+                      value={card.content}
+                      onChange={(e) => handleWordChange(index, e.target.value)}
+                      className="card-input"
+                      placeholder="PALABRA"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="cards-list">
+                {editingImages.map((card, index) => (
+                  <div key={card.id} className="card-edit-row image-card-row">
+                    <span className="card-number">{index + 1}</span>
+
+                    {card.imageData ? (
+                      // Modo imagen: mostrar preview y opción de eliminar
+                      <div className="image-preview-container">
+                        <img src={card.imageData} alt="Preview" className="image-preview" />
+                        <button
+                          className="btn-remove-image"
+                          onClick={() => handleRemoveImage(index)}
+                          title="Eliminar imagen"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      // Modo emoji/texto: mostrar input y botón de carga
+                      <>
+                        <input
+                          type="text"
+                          value={card.content}
+                          onChange={(e) => handleImageChange(index, e.target.value)}
+                          className="card-input card-input-emoji"
+                          placeholder="Emoji"
+                          disabled={!!card.imageData}
+                        />
+                        <span className="emoji-preview">
+                          {card.content ? (
+                            // Extraer el primer emoji/carácter Unicode completo
+                            [...card.content][0] || ''
+                          ) : ''}
+                        </span>
+                        <label className="btn-upload-image" title="Cargar imagen">
+                          📷
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => handleImageFileChange(index, e.target.files[0])}
+                            style={{ display: 'none' }}
+                          />
+                        </label>
+                      </>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="config-footer">
+          <button className="btn btn-secondary" onClick={handleCancel}>
+            Cancelar
+          </button>
+          <button className="btn btn-primary" onClick={handleSave}>
+            Guardar Cambios
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default DeckConfig;
