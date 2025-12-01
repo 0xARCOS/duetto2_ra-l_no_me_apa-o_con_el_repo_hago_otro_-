@@ -24,13 +24,13 @@ Descarga la última versión desde [GitHub Releases](https://github.com/ravazque
 
 Trabaja con dos mazos que se complementan perfectamente:
 
-- **44 Cartas de Palabras**: Conceptos profundos para explorar emociones, pensamientos y experiencias
-  - AMOR • MIEDO • ESPERANZA • LIBERTAD • ALEGRÍA • FAMILIA • FUERZA • PAZ
-  - Y 36 palabras más cuidadosamente seleccionadas
+- **88 Cartas de Palabras**: Conceptos profundos del juego OH original de Ely Raman (1976)
+  - AMOR • MIEDO • ESPERANZA • ALEGRÍA • PADRE • MADRE • HOGAR • PAZ
+  - Y 80 palabras más del juego OH original
 
-- **44 Cartas de Imágenes**: Símbolos visuales universales que despiertan la proyección
-  - 🌅 🌊 🏔️ 🌳 🌸 🔥 💧 🌈 🦋 🦅 🕊️ 🐚
-  - Y 32 símbolos adicionales para la exploración
+- **88 Cartas de Imágenes**: Símbolos visuales representando situaciones cotidianas
+  - 👤 😊 🌅 🏠 📱 ❤️ 🎭 🍞 🛏️ 🌊 🏔️ 🌳
+  - Y 76 símbolos adicionales basados en el juego OH
 
 ### 🎯 Interfaz Intuitiva
 
