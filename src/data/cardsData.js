@@ -22,38 +22,19 @@ export const wordCards = wordList.map((word, index) => ({
   state: 'faceDown'
 }));
 
-// Lista de 88 emojis representando situaciones cotidianas, personas, objetos y emociones
-// (Adaptación del juego OH original que usa pinturas de acuarela)
-const emojiList = [
-  // Personas y relaciones (11)
-  '👤', '👥', '👶', '👧', '👦', '👨', '👩', '👴', '👵', '👫', '👪',
-  // Emociones y expresiones (11)
-  '😊', '😢', '😡', '😰', '😱', '😍', '🤔', '😴', '😷', '🤗', '😔',
-  // Naturaleza (11)
-  '🌅', '🌊', '🏔️', '🌳', '🦋', '🌙', '⭐', '🌸', '🔥', '💧', '🌈',
-  // Lugares y edificios (11)
-  '🏠', '🏡', '🏢', '🏥', '🏫', '⛪', '🏛️', '🌉', '🏰', '🗿', '🚪',
-  // Objetos cotidianos (11)
-  '📱', '💼', '📚', '🔑', '🎁', '💌', '📷', '🎵', '🕯️', '⏰', '🔔',
-  // Símbolos y conceptos (11)
-  '❤️', '💔', '⚖️', '🔗', '💡', '🎯', '⚡', '🌟', '✨', '💫', '🔮',
-  // Actividades (11)
-  '🎭', '🎨', '🎪', '🎬', '📖', '✍️', '🎤', '🎮', '⚽', '🏃', '🧘',
-  // Comida y elementos vitales (11)
-  '🍞', '🍎', '☕', '🍷', '💊', '🚰', '🌾', '🥀', '🌹', '🍃', '🌱',
-  // Adicionales (11)
-  '🛏️', '🪑', '🚗', '✈️', '⛵', '🎓', '💰', '🏆', '🎲', '🧩', '🗝️'
-];
+// Imágenes pintadas originales del juego OH de Ely Raman (1976)
+// 88 pinturas de acuarela representando situaciones cotidianas, personas, objetos y emociones
+// Las imágenes se cargan desde /public/oh_images/
 
-export const imageCards = emojiList.map((emoji, index) => ({
+export const imageCards = Array.from({ length: 88 }, (_, index) => ({
   id: `i${index + 1}`,
   type: 'image',
-  content: emoji,
+  content: `🎨`, // Emoji de fallback si la imagen no carga
+  imageData: `/oh_images/oh_card_${String(index + 1).padStart(2, '0')}.jpg`,
   state: 'faceDown'
 }));
 
 // NOTA IMPORTANTE:
 // Juego OH original de Ely Raman (1976) - 88 palabras + 88 imágenes
-// Las imágenes originales son pinturas de acuarela. Esta versión usa emojis como representación.
-// Para usar imágenes reales, reemplazar los emojis con URLs o rutas:
-// content: '/images/card-01.jpg'
+// Las imágenes originales son pinturas de acuarela extraídas del PDF oficial.
+// Se almacenan en /public/oh_images/ y se referencian mediante el campo imageData
