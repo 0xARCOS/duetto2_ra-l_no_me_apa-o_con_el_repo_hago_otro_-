@@ -40,7 +40,7 @@ src/
 │   ├── ControlPanel.jsx      # Botones: Revelar, Reiniciar, Config
 │   └── DeckConfig.jsx        # Panel configuración con CRUD de cartas
 ├── data/
-│   └── cardsData.js          # 88 cartas por defecto (44 palabras + 44 imágenes)
+│   └── cardsData.js          # 176 cartas por defecto (88 palabras + 88 imágenes)
 └── App.css                   # Estilos globales y animaciones
 ```
 
@@ -103,7 +103,7 @@ Garantiza distribución uniforme O(n) con aleatoriedad criptográficamente segur
 ### Características Implementadas por Versión
 
 **v1.0.0 (Base)**
-- ✅ Doble mazo (44 palabras + 44 imágenes)
+- ✅ Doble mazo (88 palabras + 88 imágenes del juego OH original)
 - ✅ Selección y revelado de cartas
 - ✅ Persistencia en localStorage
 - ✅ Mezcla aleatoria Fisher-Yates

@@ -59,7 +59,7 @@ const DeckConfig = ({ isOpen, onClose, wordCards, imageCards, onUpdateCards }) =
 
   // Funciones de carga de imágenes eliminadas - las imágenes son estáticas
 
-  // Funciones de añadir/eliminar cartas eliminadas - los mazos siempre tienen 44 cartas
+  // Funciones de añadir/eliminar cartas eliminadas - los mazos siempre tienen 88 cartas (juego OH original)
 
   const handleSave = () => {
     onUpdateCards(editingWords, editingImages);

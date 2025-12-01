@@ -248,8 +248,8 @@ macOS:   ~/Library/Application Support/duetto/
 
 ```javascript
 // localStorage keys
-wordCards      // Array de 44 cartas de palabras
-imageCards     // Array de 44 cartas de imágenes
+wordCards      // Array de 88 cartas de palabras (juego OH original)
+imageCards     // Array de 88 cartas de imágenes (juego OH original)
 darkMode       // Boolean para modo oscuro
 ```
 
@@ -431,7 +431,7 @@ webPreferences: {
 ### Optimizaciones Aplicadas
 
 1. **CSS 3D transforms**: Hardware-accelerated
-2. **Virtual scrolling**: NO necesario (44 cartas es manejable)
+2. **Virtual scrolling**: NO necesario (88 cartas por mazo es manejable)
 3. **Lazy loading**: NO necesario (app pequeña)
 4. **Code splitting**: NO aplicado (bundle pequeño)
 5. **localStorage**: Sincronización eficiente con React
