@@ -7,7 +7,8 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Paleta OH: Tonos tierra cálidos y orgánicos */
+  background: linear-gradient(135deg, #E5D4B5 0%, #C9A875 50%, #B8956A 100%);
   min-height: 100vh;
   padding: 0;
   color: #333;
@@ -40,16 +41,16 @@ body::-webkit-scrollbar {
 }
 
 body::-webkit-scrollbar-track {
-  background: rgba(102, 126, 234, 0.15);
+  background: rgba(201, 168, 117, 0.15);
 }
 
 body::-webkit-scrollbar-thumb {
-  background: rgba(118, 75, 162, 0.5);
+  background: rgba(139, 115, 85, 0.5);
   border-radius: 6px;
 }
 
 body::-webkit-scrollbar-thumb:hover {
-  background: rgba(118, 75, 162, 0.7);
+  background: rgba(139, 115, 85, 0.7);
 }
 
 /* Scrollbar principal en modo oscuro */

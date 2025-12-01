@@ -93,7 +93,8 @@
    ============================================ */
 
 body.dark-mode {
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  /* Modo oscuro con paleta OH: tonos tierra oscuros */
+  background: linear-gradient(135deg, #4a3728 0%, #3a2718 50%, #2a1708 100%);
 }
 
 /* Deck en modo oscuro */
@@ -106,18 +107,33 @@ body.dark-mode {
   color: #e0e0ff;
 }
 
-/* Cartas en modo oscuro */
-.dark-mode .card-front {
-  background: #2a2a3e;
+/* Cartas en modo oscuro con paleta OH */
+.dark-mode .card.word .card-front {
+  background: linear-gradient(135deg, #8B7355 0%, #6B5444 50%, #5B4434 100%);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(139, 115, 85, 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(107, 84, 68, 0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #8B7355 0%, #6B5444 50%, #5B4434 100%);
+  color: #FAF5EF;
+}
+
+.dark-mode .card.image .card-front {
+  background: linear-gradient(135deg, #5B4434 0%, #4B3424 50%, #3B2414 100%);
+  background-image:
+    radial-gradient(circle at 30% 40%, rgba(91, 68, 52, 0.5) 0%, transparent 60%),
+    linear-gradient(135deg, #5B4434 0%, #4B3424 50%, #3B2414 100%);
   color: #ffffff;
 }
 
 .dark-mode .card-word {
-  color: #ffffff;
+  color: #FAF5EF;
 }
 
 .dark-mode .card-back {
-  background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+  background: linear-gradient(135deg, #6B5444 0%, #4a3728 50%, #3a2718 100%);
+  background-image:
+    linear-gradient(135deg, #6B5444 0%, #4a3728 50%, #3a2718 100%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,.03) 10px, rgba(255,255,255,.03) 20px);
 }
 
 /* Panel de control en modo oscuro */
@@ -180,17 +196,17 @@ body.dark-mode {
 }
 
 .dark-mode .btn-theme {
-  /* Tema claro para el botón en modo oscuro (sol ☀️) */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Tema claro para el botón en modo oscuro (sol ☀️) con paleta OH */
+  background: linear-gradient(135deg, #D89668 0%, #C88558 100%);
   color: white;
   border-color: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 4px 12px rgba(216, 150, 104, 0.3);
 }
 
 .dark-mode .btn-theme:hover {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  background: linear-gradient(135deg, #D89668 0%, #C88558 100%) !important;
   transform: translateY(-2px) scale(1.05);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+  box-shadow: 0 6px 16px rgba(216, 150, 104, 0.5);
 }
 
 /* Configurador en modo oscuro */
@@ -279,18 +295,18 @@ body.dark-mode {
 }
 
 .dark-mode .deck-grid::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  border-color: rgba(100, 100, 150, 0.3);
+  background: linear-gradient(135deg, #8B7355 0%, #6B5444 100%);
+  border-color: rgba(139, 115, 85, 0.3);
 }
 
 .dark-mode .cards-editor::-webkit-scrollbar-thumb,
 .dark-mode .config-body::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: #8B7355;
 }
 
 .dark-mode .cards-editor::-webkit-scrollbar-thumb:hover,
 .dark-mode .config-body::-webkit-scrollbar-thumb:hover {
-  background: #5568d3;
+  background: #6B5444;
 }
 
 .dark-mode .cards-editor::-webkit-scrollbar-track,
