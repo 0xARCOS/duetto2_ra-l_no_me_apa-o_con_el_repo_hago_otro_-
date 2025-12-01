@@ -1,9 +1,11 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 
+let mainWindow;
+
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1400,
     height: 900,
     minWidth: 800,
@@ -11,7 +13,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      enableRemoteModule: false
+      enableRemoteModule: false,
+      preload: path.join(__dirname, 'preload.js')
     },
     icon: path.join(__dirname, 'build', 'icon.png'),
     title: 'Duetto'
@@ -49,4 +52,19 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
+});
+
+// IPC Handlers para controlar la ventana
+ipcMain.handle('window-toggle-maximize', () => {
+  if (mainWindow.isMaximized()) {
+    mainWindow.unmaximize();
+    return false; // No está maximizada después de la acción
+  } else {
+    mainWindow.maximize();
+    return true; // Está maximizada después de la acción
+  }
+});
+
+ipcMain.handle('window-close', () => {
+  mainWindow.close();
 });
