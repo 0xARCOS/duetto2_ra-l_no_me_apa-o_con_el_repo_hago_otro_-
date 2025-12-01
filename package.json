@@ -36,6 +36,7 @@
     "files": [
       "dist/**/*",
       "electron.js",
+      "preload.js",
       "package.json"
     ],
     "directories": {

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './ControlPanel.css';
 
 /**
@@ -16,6 +17,20 @@ import './ControlPanel.css';
  * - onToggleDarkMode: función para cambiar modo oscuro
  */
 const ControlPanel = ({ selectedWords, selectedImages, selectedCount, flippedWords, flippedImages, onFlipSelected, onReset, onOpenConfig, darkMode, onToggleDarkMode }) => {
+  const [isMaximized, setIsMaximized] = useState(false);
+
+  const handleToggleMaximize = async () => {
+    if (window.electronAPI) {
+      const newState = await window.electronAPI.toggleMaximize();
+      setIsMaximized(newState);
+    }
+  };
+
+  const handleClose = () => {
+    if (window.electronAPI) {
+      window.electronAPI.closeWindow();
+    }
+  };
   return (
     <div className="control-panel">
       <div className="control-row">
@@ -69,6 +84,22 @@ const ControlPanel = ({ selectedWords, selectedImages, selectedCount, flippedWor
             title={darkMode ? "Modo claro" : "Modo oscuro"}
           >
             {darkMode ? '☀️' : '🌙'}
+          </button>
+
+          <button
+            className="btn btn-window"
+            onClick={handleToggleMaximize}
+            title={isMaximized ? "Restaurar ventana" : "Maximizar ventana"}
+          >
+            {isMaximized ? '🗗' : '🗖'}
+          </button>
+
+          <button
+            className="btn btn-close"
+            onClick={handleClose}
+            title="Cerrar aplicación"
+          >
+            ✕
           </button>
         </div>
       </div>
