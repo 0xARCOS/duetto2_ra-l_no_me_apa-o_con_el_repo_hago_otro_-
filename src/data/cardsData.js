@@ -22,38 +22,29 @@ export const wordCards = wordList.map((word, index) => ({
   state: 'faceDown'
 }));
 
-// Lista de 88 emojis representando situaciones cotidianas, personas, objetos y emociones
-// (Adaptación del juego OH original que usa pinturas de acuarela)
-const emojiList = [
-  // Personas y relaciones (11)
-  '👤', '👥', '👶', '👧', '👦', '👨', '👩', '👴', '👵', '👫', '👪',
-  // Emociones y expresiones (11)
-  '😊', '😢', '😡', '😰', '😱', '😍', '🤔', '😴', '😷', '🤗', '😔',
-  // Naturaleza (11)
-  '🌅', '🌊', '🏔️', '🌳', '🦋', '🌙', '⭐', '🌸', '🔥', '💧', '🌈',
-  // Lugares y edificios (11)
-  '🏠', '🏡', '🏢', '🏥', '🏫', '⛪', '🏛️', '🌉', '🏰', '🗿', '🚪',
-  // Objetos cotidianos (11)
-  '📱', '💼', '📚', '🔑', '🎁', '💌', '📷', '🎵', '🕯️', '⏰', '🔔',
-  // Símbolos y conceptos (11)
-  '❤️', '💔', '⚖️', '🔗', '💡', '🎯', '⚡', '🌟', '✨', '💫', '🔮',
-  // Actividades (11)
-  '🎭', '🎨', '🎪', '🎬', '📖', '✍️', '🎤', '🎮', '⚽', '🏃', '🧘',
-  // Comida y elementos vitales (11)
-  '🍞', '🍎', '☕', '🍷', '💊', '🚰', '🌾', '🥀', '🌹', '🍃', '🌱',
-  // Adicionales (11)
-  '🛏️', '🪑', '🚗', '✈️', '⛵', '🎓', '💰', '🏆', '🎲', '🧩', '🗝️'
-];
+// Lista de 88 imágenes del juego OH original (pinturas de acuarela)
+// Actualmente hay 83 imágenes disponibles, las últimas 5 usan emojis como placeholder
+const imageList = [];
+for (let i = 1; i <= 88; i++) {
+  if (i <= 83) {
+    imageList.push(`/images/card-${String(i).padStart(2, '0')}.png`);
+  } else {
+    // Placeholders para las 5 imágenes faltantes (84-88)
+    const placeholders = ['🎲', '🧩', '🗝️', '🌟', '✨'];
+    imageList.push(placeholders[i - 84]);
+  }
+}
 
-export const imageCards = emojiList.map((emoji, index) => ({
+export const imageCards = imageList.map((image, index) => ({
   id: `i${index + 1}`,
   type: 'image',
-  content: emoji,
+  content: typeof image === 'string' && image.startsWith('/') ? '' : image,
+  imageData: typeof image === 'string' && image.startsWith('/') ? image : null,
   state: 'faceDown'
 }));
 
 // NOTA IMPORTANTE:
 // Juego OH original de Ely Raman (1976) - 88 palabras + 88 imágenes
-// Las imágenes originales son pinturas de acuarela. Esta versión usa emojis como representación.
-// Para usar imágenes reales, reemplazar los emojis con URLs o rutas:
-// content: '/images/card-01.jpg'
+// Las imágenes originales son pinturas de acuarela.
+// Actualmente se usan 83 imágenes reales (card-01.png a card-83.png)
+// Las últimas 5 cartas (84-88) usan emojis como placeholder hasta que se agreguen las imágenes faltantes
