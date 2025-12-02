@@ -2,6 +2,13 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 const isDev = process.env.NODE_ENV === 'development';
 
+// Deshabilitar sandbox SUID en Linux para compatibilidad con AppImage
+// También permitir ejecución como root si es necesario
+if (process.platform === 'linux') {
+  app.commandLine.appendSwitch('no-sandbox');
+  app.commandLine.appendSwitch('disable-setuid-sandbox');
+}
+
 let mainWindow;
 
 function createWindow() {
