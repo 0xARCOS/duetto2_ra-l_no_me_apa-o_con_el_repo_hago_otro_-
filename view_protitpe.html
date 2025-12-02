@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OH Cards Digital - Selección de Cartas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&family=DM+Serif+Display&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --sepia-light: #f4ede4;
+            --sepia-mid: #e8dcc8;
+            --sepia-dark: #8b7355;
+            --sage: #7a9d8f;
+            --rust: #b85c38;
+            --deep-blue: #2d4654;
+            --ivory: #fdfbf7;
+            --charcoal: #3a3a3a;
+            --gold: #d4af37;
+        }
+
+        body {
+            font-family: 'Crimson Pro', serif;
+            background: linear-gradient(135deg, var(--sepia-light) 0%, var(--sepia-mid) 50%, var(--ivory) 100%);
+            color: var(--charcoal);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            opacity: 0.4;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 2rem 0 1.5rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-family: 'DM Serif Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            color: var(--deep-blue);
+            letter-spacing: 0.02em;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.03);
+        }
+
+        .subtitle {
+            font-size: 0.95rem;
+            color: var(--sepia-dark);
+            font-weight: 300;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Instructions */
+        .instructions {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--sepia-mid);
+            text-align: center;
+            animation: fadeIn 1s ease-out 0.3s both;
+        }
+
+        .instructions h2 {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.5rem;
+            color: var(--deep-blue);
+            margin-bottom: 1rem;
+        }
+
+        .instructions p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: var(--charcoal);
+        }
+
+        .step-indicator {
+            display: inline-block;
+            background: var(--sage);
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        /* Deck container */
+        .deck-container {
+            margin: 2rem 0;
+            animation: fadeIn 1s ease-out 0.6s both;
+        }
+
+        .deck-title {
+            font-family: 'DM Serif Display', serif;
+            font-size: 1.8rem;
+            color: var(--rust);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            gap: 12px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            border: 2px solid var(--sepia-mid);
+        }
+
+        .mini-card {
+            aspect-ratio: 0.7;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--deep-blue), var(--sage));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            border: 3px solid transparent;
+        }
+
+        .mini-card::before {
+            content: 'OH';
+            position: absolute;
+            font-size: 1.5rem;
+            font-family: 'DM Serif Display', serif;
+            color: rgba(255,255,255,0.15);
+            font-weight: bold;
+            pointer-events: none;
+        }
+
+        .mini-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+        }
+
+        .mini-card.selected {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.3), 0 8px 16px rgba(0,0,0,0.3);
+            transform: translateY(-4px);
+        }
+
+        .mini-card.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: var(--gold);
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .mini-card.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* Selected cards preview */
+        .preview-area {
+            margin: 3rem auto;
+            max-width: 900px;
+            display: none;
+            gap: 3rem;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            perspective: 1500px;
+        }
+
+        .preview-area.visible {
+            display: flex;
+        }
+
+        .preview-card {
+            width: 280px;
+            height: 400px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .preview-card.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            border: 3px solid var(--sepia-dark);
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, var(--deep-blue), var(--sage));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-back::before {
+            content: 'OH';
+            position: absolute;
+            font-size: 8rem;
+            font-family: 'DM Serif Display', serif;
+            color: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+
+        .card-front {
+            transform: rotateY(180deg);
+            background: var(--ivory);
+        }
+
+        .card-front.picture-card {
+            padding: 1.5rem;
+        }
+
+        .card-front.word-card {
+            background: linear-gradient(to bottom, var(--ivory), var(--sepia-light));
+        }
+
+        .card-word {
+            font-family: 'DM Serif Display', serif;
+            font-size: 2.5rem;
+            color: var(--rust);
+            text-align: center;
+            line-height: 1.3;
+            word-wrap: break-word;
+        }
+
+        .card-label {
+            position: absolute;
+            bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--sepia-dark);
+            opacity: 0.6;
+        }
+
+        /* Action buttons */
+        .actions {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            font-family: 'Crimson Pro', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: 2px solid var(--rust);
+            background: var(--rust);
+            color: var(--ivory);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.05em;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn:not(:disabled):hover {
+            background: var(--deep-blue);
+            border-color: var(--deep-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--rust);
+        }
+
+        .btn-secondary:not(:disabled):hover {
+            background: var(--rust);
+            color: var(--ivory);
+        }
+
+        /* Hide sections */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                gap: 8px;
+                padding: 1rem;
+            }
+
+            .preview-card {
+                width: 240px;
+                height: 340px;
+            }
+
+            .instructions {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+                gap: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>OH Cards Digital</h1>
+            <p class="subtitle">Sistema de Selección Terapéutica</p>
+        </header>
+
+        <div class="instructions" id="instructions">
+            <span class="step-indicator" id="stepIndicator">Paso 1 de 2</span>
+            <h2 id="instructionTitle">Selecciona una carta de PALABRAS</h2>
+            <p id="instructionText">Haz clic en una carta del mazo de palabras. La carta quedará seleccionada pero permanecerá boca abajo.</p>
+        </div>
+
+        <!-- Word Cards Deck -->
+        <div class="deck-container" id="wordDeckContainer">
+            <h3 class="deck-title">Mazo de Palabras (88 cartas)</h3>
+            <div class="cards-grid" id="wordDeck"></div>
+        </div>
+
+        <!-- Picture Cards Deck -->
+        <div class="deck-container hidden" id="pictureDeckContainer">
+            <h3 class="deck-title">Mazo de Imágenes (88 cartas)</h3>
+            <div class="cards-grid" id="pictureDeck"></div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="actions">
+            <button class="btn hidden" id="revealBtn">Revelar Cartas Seleccionadas</button>
+            <button class="btn btn-secondary" id="resetBtn">Reiniciar Selección</button>
+        </div>
+
+        <!-- Preview Area -->
+        <div class="preview-area" id="previewArea"></div>
+    </div>
+
+    <script>
+        // Complete card data - 88 words + 88 pictures
+        const wordCards = [
+            // Emociones Básicas
+            { id: 1, word: 'ALEGRÍA', category: 'emotion', color: '#f4c542' },
+            { id: 2, word: 'TRISTEZA', category: 'emotion', color: '#5c7a8f' },
+            { id: 3, word: 'MIEDO', category: 'emotion', color: '#6f5f7a' },
+            { id: 4, word: 'RABIA', category: 'emotion', color: '#d94f2c' },
+            { id: 5, word: 'AMOR', category: 'emotion', color: '#d98c7a' },
+            { id: 6, word: 'SORPRESA', category: 'emotion', color: '#ff8f6b' },
+            { id: 7, word: 'CALMA', category: 'emotion', color: '#7a9d8f' },
+            { id: 8, word: 'ANSIEDAD', category: 'emotion', color: '#8b7a8f' },
+            { id: 9, word: 'VERGÜENZA', category: 'emotion', color: '#9d7a7a' },
+            { id: 10, word: 'CULPA', category: 'emotion', color: '#7a6b6b' },
+            
+            // Conceptos Relacionales
+            { id: 11, word: 'FAMILIA', category: 'relational', color: '#b87355' },
+            { id: 12, word: 'AMISTAD', category: 'relational', color: '#8fa47a' },
+            { id: 13, word: 'SOLEDAD', category: 'relational', color: '#8b9ba8' },
+            { id: 14, word: 'CONFLICTO', category: 'relational', color: '#b85c38' },
+            { id: 15, word: 'UNIÓN', category: 'relational', color: '#c4906f' },
+            { id: 16, word: 'DISTANCIA', category: 'relational', color: '#7a8b99' },
+            { id: 17, word: 'CONEXIÓN', category: 'relational', color: '#d4895f' },
+            { id: 18, word: 'SEPARACIÓN', category: 'relational', color: '#6b7c8f' },
+            { id: 19, word: 'COMUNIDAD', category: 'relational', color: '#7a9d8f' },
+            { id: 20, word: 'PAREJA', category: 'relational', color: '#d98c7a' },
+            
+            // Procesos y Acciones
+            { id: 21, word: 'CAMBIO', category: 'process', color: '#f0a542' },
+            { id: 22, word: 'CRECIMIENTO', category: 'process', color: '#5a7247' },
+            { id: 23, word: 'BÚSQUEDA', category: 'process', color: '#6d7f8f' },
+            { id: 24, word: 'LIBERACIÓN', category: 'process', color: '#d4af37' },
+            { id: 25, word: 'TRANSFORMACIÓN', category: 'process', color: '#d94f2c' },
+            { id: 26, word: 'INICIO', category: 'process', color: '#f4c542' },
+            { id: 27, word: 'FINAL', category: 'process', color: '#4a4a4a' },
+            { id: 28, word: 'MOVIMIENTO', category: 'process', color: '#7a8b9d' },
+            { id: 29, word: 'PAUSA', category: 'process', color: '#a8b4c4' },
+            { id: 30, word: 'DESPERTAR', category: 'process', color: '#f0a542' },
+            
+            // Polaridades
+            { id: 31, word: 'LUZ', category: 'polarity', color: '#f4d442' },
+            { id: 32, word: 'OSCURIDAD', category: 'polarity', color: '#3a3a3a' },
+            { id: 33, word: 'CERCA', category: 'polarity', color: '#d4895f' },
+            { id: 34, word: 'LEJOS', category: 'polarity', color: '#8b9ba8' },
+            { id: 35, word: 'DENTRO', category: 'polarity', color: '#7a5f8f' },
+            { id: 36, word: 'FUERA', category: 'polarity', color: '#7a9d8f' },
+            { id: 37, word: 'ARRIBA', category: 'polarity', color: '#5f8f9d' },
+            { id: 38, word: 'ABAJO', category: 'polarity', color: '#6d7f8f' },
+            { id: 39, word: 'ANTES', category: 'polarity', color: '#8b7a8f' },
+            { id: 40, word: 'DESPUÉS', category: 'polarity', color: '#9d8f7a' },
+            
+            // Estados Internos
+            { id: 41, word: 'CONFUSIÓN', category: 'internal', color: '#a8b4c4' },
+            { id: 42, word: 'CLARIDAD', category: 'internal', color: '#f4ede4' },
+            { id: 43, word: 'PAZ', category: 'internal', color: '#7a9d8f' },
+            { id: 44, word: 'CAOS', category: 'internal', color: '#ff6b6b' },
+            { id: 45, word: 'FUERZA', category: 'internal', color: '#8b6f4f' },
+            { id: 46, word: 'DEBILIDAD', category: 'internal', color: '#b4b8bc' },
+            { id: 47, word: 'ESPERANZA', category: 'internal', color: '#f0a542' },
+            { id: 48, word: 'DESESPERANZA', category: 'internal', color: '#5c5c5c' },
+            { id: 49, word: 'LIBERTAD', category: 'internal', color: '#5f8f9d' },
+            { id: 50, word: 'PRISIÓN', category: 'internal', color: '#4a4a4a' },
+            { id: 51, word: 'CONFIANZA', category: 'internal', color: '#8fa47a' },
+            { id: 52, word: 'DESCONFIANZA', category: 'internal', color: '#7a6b6b' },
+            { id: 53, word: 'VALENTÍA', category: 'internal', color: '#b85c38' },
+            { id: 54, word: 'COBARDÍA', category: 'internal', color: '#8b9ba8' },
+            { id: 55, word: 'SERENIDAD', category: 'internal', color: '#7a9d8f' },
+            
+            // Conceptos Existenciales
+            { id: 56, word: 'VIDA', category: 'existential', color: '#5a7247' },
+            { id: 57, word: 'MUERTE', category: 'existential', color: '#3a3a3a' },
+            { id: 58, word: 'TIEMPO', category: 'existential', color: '#8b7355' },
+            { id: 59, word: 'ETERNIDAD', category: 'existential', color: '#2d4654' },
+            { id: 60, word: 'VERDAD', category: 'existential', color: '#d4af37' },
+            { id: 61, word: 'MENTIRA', category: 'existential', color: '#7a6b6b' },
+            { id: 62, word: 'REALIDAD', category: 'existential', color: '#6d7f8f' },
+            { id: 63, word: 'ILUSIÓN', category: 'existential', color: '#a8b4c4' },
+            { id: 64, word: 'DESTINO', category: 'existential', color: '#7a5f8f' },
+            { id: 65, word: 'LIBRE ALBEDRÍO', category: 'existential', color: '#5f8f9d' },
+            
+            // Valores y Virtudes
+            { id: 66, word: 'JUSTICIA', category: 'values', color: '#6d7f8f' },
+            { id: 67, word: 'INJUSTICIA', category: 'values', color: '#b85c38' },
+            { id: 68, word: 'BONDAD', category: 'values', color: '#8fa47a' },
+            { id: 69, word: 'MALDAD', category: 'values', color: '#4a4a4a' },
+            { id: 70, word: 'GENEROSIDAD', category: 'values', color: '#d4895f' },
+            { id: 71, word: 'EGOÍSMO', category: 'values', color: '#7a6b6b' },
+            { id: 72, word: 'HONESTIDAD', category: 'values', color: '#d4af37' },
+            { id: 73, word: 'DESHONESTIDAD', category: 'values', color: '#5c5c5c' },
+            { id: 74, word: 'COMPASIÓN', category: 'values', color: '#7a9d8f' },
+            { id: 75, word: 'CRUELDAD', category: 'values', color: '#b85c38' },
+            
+            // Acciones Relacionales
+            { id: 76, word: 'DAR', category: 'action', color: '#d4895f' },
+            { id: 77, word: 'RECIBIR', category: 'action', color: '#c4906f' },
+            { id: 78, word: 'PEDIR', category: 'action', color: '#8b7355' },
+            { id: 79, word: 'RECHAZAR', category: 'action', color: '#7a6b6b' },
+            { id: 80, word: 'PERDONAR', category: 'action', color: '#7a9d8f' },
+            { id: 81, word: 'JUZGAR', category: 'action', color: '#6d5f52' },
+            { id: 82, word: 'ACEPTAR', category: 'action', color: '#8fa47a' },
+            { id: 83, word: 'RESISTIR', category: 'action', color: '#b85c38' },
+            { id: 84, word: 'ESCUCHAR', category: 'action', color: '#7a8b99' },
+            { id: 85, word: 'HABLAR', category: 'action', color: '#d4895f' },
+            { id: 86, word: 'SILENCIO', category: 'action', color: '#a8b4c4' },
+            { id: 87, word: 'EXPRESAR', category: 'action', color: '#f0a542' },
+            { id: 88, word: 'REPRIMIR', category: 'action', color: '#5c5c5c' }
+        ];
+
+        const pictureCards = [
+            // Naturaleza y Elementos
+            { id: 1, category: 'nature', theme: 'Árbol solitario', color: '#5a7247', description: 'soledad contemplativa' },
+            { id: 2, category: 'nature', theme: 'Montañas', color: '#6b7c8f', description: 'perspectiva y distancia' },
+            { id: 3, category: 'nature', theme: 'Océano', color: '#2d5f7f', description: 'movimiento constante' },
+            { id: 4, category: 'nature', theme: 'Fuego', color: '#d94f2c', description: 'transformación' },
+            { id: 5, category: 'nature', theme: 'Nube', color: '#b4b8bc', description: 'ambigüedad' },
+            { id: 6, category: 'nature', theme: 'Sol naciente', color: '#f0a542', description: 'esperanza renovada' },
+            { id: 7, category: 'nature', theme: 'Luna', color: '#7a8b99', description: 'misterio nocturno' },
+            { id: 8, category: 'nature', theme: 'Bosque denso', color: '#4a5f3a', description: 'profundidad inexplorada' },
+            { id: 9, category: 'nature', theme: 'Desierto', color: '#d4a574', description: 'aislamiento y vastedad' },
+            { id: 10, category: 'nature', theme: 'Lluvia', color: '#7a8b9d', description: 'renovación y melancolía' },
+            { id: 11, category: 'nature', theme: 'Tormenta', color: '#4a4a5c', description: 'caos y poder natural' },
+            { id: 12, category: 'nature', theme: 'Arcoíris', color: '#9d8fa4', description: 'esperanza tras tormenta' },
+            
+            // Figuras Humanas
+            { id: 13, category: 'human', theme: 'Mujer contemplativa', color: '#c4a9a0', description: 'introspección' },
+            { id: 14, category: 'human', theme: 'Hombre en movimiento', color: '#8b6f4f', description: 'acción decidida' },
+            { id: 15, category: 'human', theme: 'Niño jugando', color: '#f4c542', description: 'inocencia alegre' },
+            { id: 16, category: 'human', theme: 'Anciano', color: '#6d5f52', description: 'sabiduría temporal' },
+            { id: 17, category: 'human', theme: 'Pareja abrazada', color: '#d98c7a', description: 'conexión cálida' },
+            { id: 18, category: 'human', theme: 'Figura de espaldas', color: '#5c7a8f', description: 'distanciamiento' },
+            { id: 19, category: 'human', theme: 'Rostro dividido', color: '#3a3a3a', description: 'dualidad interna' },
+            { id: 20, category: 'human', theme: 'Persona dormida', color: '#7a8b99', description: 'descanso o inconsciencia' },
+            { id: 21, category: 'human', theme: 'Bailarín', color: '#d4895f', description: 'expresión libre' },
+            { id: 22, category: 'human', theme: 'Trabajador', color: '#8b7355', description: 'esfuerzo y labor' },
+            { id: 23, category: 'human', theme: 'Meditador', color: '#7a9d8f', description: 'paz interior' },
+            { id: 24, category: 'human', theme: 'Gritando', color: '#d94f2c', description: 'expresión intensa' },
+            { id: 25, category: 'human', theme: 'Abrazándose a sí mismo', color: '#8b7a8f', description: 'autoprotección' },
+            
+            // Relaciones
+            { id: 26, category: 'relations', theme: 'Manos entrelazadas', color: '#c4906f', description: 'calidez vincular' },
+            { id: 27, category: 'relations', theme: 'Círculo de personas', color: '#7a9d8f', description: 'comunidad' },
+            { id: 28, category: 'relations', theme: 'Figuras distantes', color: '#8b9ba8', description: 'separación' },
+            { id: 29, category: 'relations', theme: 'Abrazo protector', color: '#d4895f', description: 'seguridad' },
+            { id: 30, category: 'relations', theme: 'Conflicto', color: '#b85c38', description: 'tensión relacional' },
+            { id: 31, category: 'relations', theme: 'Despedida', color: '#7a8b99', description: 'separación dolorosa' },
+            { id: 32, category: 'relations', theme: 'Reencuentro', color: '#f0a542', description: 'alegría compartida' },
+            { id: 33, category: 'relations', theme: 'Espera', color: '#a8b4c4', description: 'anticipación' },
+            { id: 34, category: 'relations', theme: 'Rechazo', color: '#7a6b6b', description: 'exclusión dolorosa' },
+            { id: 35, category: 'relations', theme: 'Acogida', color: '#8fa47a', description: 'aceptación cálida' },
+            
+            // Objetos Simbólicos
+            { id: 36, category: 'symbols', theme: 'Puerta', color: '#8b7355', description: 'transición vital' },
+            { id: 37, category: 'symbols', theme: 'Ventana', color: '#5f7a8b', description: 'perspectiva externa' },
+            { id: 38, category: 'symbols', theme: 'Llave', color: '#d4af37', description: 'posibilidad de acceso' },
+            { id: 39, category: 'symbols', theme: 'Puente', color: '#6d7f8f', description: 'conexión entre mundos' },
+            { id: 40, category: 'symbols', theme: 'Escalera', color: '#7a7a7a', description: 'ascenso progresivo' },
+            { id: 41, category: 'symbols', theme: 'Jaula abierta', color: '#4a4a4a', description: 'libertad posible' },
+            { id: 42, category: 'symbols', theme: 'Libro abierto', color: '#f4ede4', description: 'conocimiento disponible' },
+            { id: 43, category: 'symbols', theme: 'Espejo', color: '#c4d4e4', description: 'autoconocimiento' },
+            { id: 44, category: 'symbols', theme: 'Reloj', color: '#8b7355', description: 'paso del tiempo' },
+            { id: 45, category: 'symbols', theme: 'Balanza', color: '#6d7f8f', description: 'equilibrio y justicia' },
+            { id: 46, category: 'symbols', theme: 'Ancla', color: '#2d4654', description: 'estabilidad' },
+            { id: 47, category: 'symbols', theme: 'Vela encendida', color: '#f4d442', description: 'esperanza en oscuridad' },
+            { id: 48, category: 'symbols', theme: 'Semilla', color: '#5a7247', description: 'potencial oculto' },
+            { id: 49, category: 'symbols', theme: 'Flor marchita', color: '#8b7a8f', description: 'fin de ciclo' },
+            { id: 50, category: 'symbols', theme: 'Brote nuevo', color: '#7a9d8f', description: 'nuevo comienzo' },
+            
+            // Espacios
+            { id: 51, category: 'spaces', theme: 'Casa', color: '#b87355', description: 'refugio personal' },
+            { id: 52, category: 'spaces', theme: 'Camino serpenteante', color: '#8b7a4f', description: 'viaje vital' },
+            { id: 53, category: 'spaces', theme: 'Laberinto', color: '#6f6f6f', description: 'búsqueda compleja' },
+            { id: 54, category: 'spaces', theme: 'Habitación vacía', color: '#e8e8e8', description: 'espacio potencial' },
+            { id: 55, category: 'spaces', theme: 'Ciudad', color: '#5f5f5f', description: 'colectividad urbana' },
+            { id: 56, category: 'spaces', theme: 'Cruce de caminos', color: '#8b7a4f', description: 'decisión crucial' },
+            { id: 57, category: 'spaces', theme: 'Callejón sin salida', color: '#5c5c5c', description: 'bloqueo' },
+            { id: 58, category: 'spaces', theme: 'Plaza abierta', color: '#a8b4c4', description: 'encuentro público' },
+            { id: 59, category: 'spaces', theme: 'Cueva', color: '#4a4a5c', description: 'refugio profundo' },
+            { id: 60, category: 'spaces', theme: 'Cima de montaña', color: '#6b7c8f', description: 'logro alcanzado' },
+            
+            // Estados Abstractos
+            { id: 61, category: 'abstract', theme: 'Espiral', color: '#7a5f8f', description: 'proceso cíclico' },
+            { id: 62, category: 'abstract', theme: 'Explosión cromática', color: '#ff6b6b', description: 'intensidad emocional' },
+            { id: 63, category: 'abstract', theme: 'Niebla', color: '#a8b4c4', description: 'incertidumbre' },
+            { id: 64, category: 'abstract', theme: 'Luz en oscuridad', color: '#f4d442', description: 'esperanza emergente' },
+            { id: 65, category: 'abstract', theme: 'Cristales rotos', color: '#8fb4c4', description: 'fragmentación' },
+            { id: 66, category: 'abstract', theme: 'Ondas concéntricas', color: '#5f8f9d', description: 'expansión serena' },
+            { id: 67, category: 'abstract', theme: 'Red interconectada', color: '#7a9d8f', description: 'interdependencia' },
+            { id: 68, category: 'abstract', theme: 'Vacío negro', color: '#1a1a1a', description: 'ausencia total' },
+            { id: 69, category: 'abstract', theme: 'Luz blanca', color: '#ffffff', description: 'plenitud luminosa' },
+            { id: 70, category: 'abstract', theme: 'Caos de líneas', color: '#5c5c5c', description: 'confusión mental' },
+            
+            // Transiciones y Umbrales
+            { id: 71, category: 'transition', theme: 'Amanecer', color: '#f0a542', description: 'nuevo día' },
+            { id: 72, category: 'transition', theme: 'Atardecer', color: '#d98c7a', description: 'cierre de ciclo' },
+            { id: 73, category: 'transition', theme: 'Eclipse', color: '#4a4a5c', description: 'momento de cambio' },
+            { id: 74, category: 'transition', theme: 'Umbral de puerta', color: '#8b7355', description: 'paso entre mundos' },
+            { id: 75, category: 'transition', theme: 'Frontera', color: '#6d7f8f', description: 'límite a cruzar' },
+            
+            // Elementos del Cuerpo
+            { id: 76, category: 'body', theme: 'Ojos', color: '#5c7a8f', description: 'percepción y mirada' },
+            { id: 77, category: 'body', theme: 'Manos abiertas', color: '#c4906f', description: 'dar o recibir' },
+            { id: 78, category: 'body', theme: 'Corazón', color: '#d98c7a', description: 'centro emocional' },
+            { id: 79, category: 'body', theme: 'Cabeza inclinada', color: '#8b7a8f', description: 'reflexión o pesar' },
+            { id: 80, category: 'body', theme: 'Pies descalzos', color: '#8b7355', description: 'conexión con tierra' },
+            
+            // Animales Simbólicos
+            { id: 81, category: 'animals', theme: 'Pájaro en vuelo', color: '#5f8f9d', description: 'libertad y elevación' },
+            { id: 82, category: 'animals', theme: 'Pájaro enjaulado', color: '#7a6b6b', description: 'restricción' },
+            { id: 83, category: 'animals', theme: 'Mariposa', color: '#d4895f', description: 'transformación bella' },
+            { id: 84, category: 'animals', theme: 'Serpiente', color: '#5a7247', description: 'transformación profunda' },
+            { id: 85, category: 'animals', theme: 'Lobo solitario', color: '#6d5f52', description: 'independencia salvaje' },
+            
+            // Objetos Cotidianos Simbólicos
+            { id: 86, category: 'objects', theme: 'Silla vacía', color: '#8b7355', description: 'ausencia presente' },
+            { id: 87, category: 'objects', theme: 'Mesa preparada', color: '#c4906f', description: 'hospitalidad y espera' },
+            { id: 88, category: 'objects', theme: 'Maleta', color: '#7a8b99', description: 'viaje o partida' }
+        ];
+
+        // State management
+        let selectedWordCard = null;
+        let selectedPictureCard = null;
+        let currentStep = 1;
+
+        // Initialize
+        function init() {
+            renderWordDeck();
+            updateInstructions();
+            
+            document.getElementById('revealBtn').addEventListener('click', revealCards);
+            document.getElementById('resetBtn').addEventListener('click', resetSelection);
+        }
+
+        function renderWordDeck() {
+            const deck = document.getElementById('wordDeck');
+            deck.innerHTML = '';
+            
+            wordCards.forEach((card, index) => {
+                const miniCard = document.createElement('div');
+                miniCard.className = 'mini-card';
+                miniCard.dataset.cardId = card.id;
+                miniCard.dataset.type = 'word';
+                
+                miniCard.addEventListener('click', () => selectWordCard(card, miniCard));
+                
+                deck.appendChild(miniCard);
+            });
+        }
+
+        function renderPictureDeck() {
+            const deck = document.getElementById('pictureDeck');
+            deck.innerHTML = '';
+            
+            pictureCards.forEach((card, index) => {
+                const miniCard = document.createElement('div');
+                miniCard.className = 'mini-card';
+                miniCard.dataset.cardId = card.id;
+                miniCard.dataset.type = 'picture';
+                
+                miniCard.addEventListener('click', () => selectPictureCard(card, miniCard));
+                
+                deck.appendChild(miniCard);
+            });
+        }
+
+        function selectWordCard(card, element) {
+            // Deselect previous
+            const previousSelected = document.querySelector('#wordDeck .mini-card.selected');
+            if (previousSelected) {
+                previousSelected.classList.remove('selected');
+            }
+            
+            // Select new
+            element.classList.add('selected');
+            selectedWordCard = card;
+            
+            // Move to step 2
+            currentStep = 2;
+            updateInstructions();
+            
+            // Show picture deck
+            document.getElementById('wordDeckContainer').classList.add('hidden');
+            document.getElementById('pictureDeckContainer').classList.remove('hidden');
+            renderPictureDeck();
+        }
+
+        function selectPictureCard(card, element) {
+            // Deselect previous
+            const previousSelected = document.querySelector('#pictureDeck .mini-card.selected');
+            if (previousSelected) {
+                previousSelected.classList.remove('selected');
+            }
+            
+            // Select new
+            element.classList.add('selected');
+            selectedPictureCard = card;
+            
+            // Enable reveal button
+            document.getElementById('revealBtn').classList.remove('hidden');
+            updateInstructions();
+        }
+
+        function updateInstructions() {
+            const stepIndicator = document.getElementById('stepIndicator');
+            const instructionTitle = document.getElementById('instructionTitle');
+            const instructionText = document.getElementById('instructionText');
+            
+            if (currentStep === 1) {
+                stepIndicator.textContent = 'Paso 1 de 2';
+                instructionTitle.textContent = 'Selecciona una carta de PALABRAS';
+                instructionText.textContent = 'Haz clic en una carta del mazo de palabras. La carta quedará seleccionada pero permanecerá boca abajo.';
+            } else if (currentStep === 2 && !selectedPictureCard) {
+                stepIndicator.textContent = 'Paso 2 de 2';
+                instructionTitle.textContent = 'Ahora selecciona una carta de IMÁGENES';
+                instructionText.textContent = 'Haz clic en una carta del mazo de imágenes. Una vez seleccionada, podrás revelar ambas cartas.';
+            } else if (selectedWordCard && selectedPictureCard) {
+                stepIndicator.textContent = 'Listo';
+                stepIndicator.style.background = 'var(--gold)';
+                instructionTitle.textContent = '¡Ambas cartas seleccionadas!';
+                instructionText.textContent = 'Haz clic en "Revelar Cartas Seleccionadas" para ver tu combinación.';
+            }
+        }
+
+        function revealCards() {
+            if (!selectedWordCard || !selectedPictureCard) return;
+            
+            // Hide decks and instructions
+            document.getElementById('wordDeckContainer').classList.add('hidden');
+            document.getElementById('pictureDeckContainer').classList.add('hidden');
+            document.getElementById('instructions').classList.add('hidden');
+            document.getElementById('revealBtn').classList.add('hidden');
+            
+            // Create preview cards
+            const previewArea = document.getElementById('previewArea');
+            previewArea.innerHTML = '';
+            
+            // Create word card
+            const wordPreview = createPreviewCard(selectedWordCard, 'word');
+            previewArea.appendChild(wordPreview);
+            
+            // Create picture card
+            const picturePreview = createPreviewCard(selectedPictureCard, 'picture');
+            previewArea.appendChild(picturePreview);
+            
+            // Show preview area
+            previewArea.classList.add('visible');
+            
+            // Auto-flip after delay
+            setTimeout(() => {
+                wordPreview.classList.add('flipped');
+                picturePreview.classList.add('flipped');
+            }, 800);
+        }
+
+        function createPreviewCard(data, type) {
+            const card = document.createElement('div');
+            card.className = 'preview-card';
+            
+            if (type === 'word') {
+                card.innerHTML = `
+                    <div class="card-face card-back">
+                        <div style="width: 60px; height: 60px; border: 3px solid rgba(255,255,255,0.3); border-radius: 8px;"></div>
+                    </div>
+                    <div class="card-face card-front word-card">
+                        <div class="card-word" style="color: ${data.color}">${data.word}</div>
+                        <span class="card-label">Palabra #${data.id}</span>
+                    </div>
+                `;
+            } else {
+                card.innerHTML = `
+                    <div class="card-face card-back">
+                        <div style="width: 60px; height: 60px; border: 3px solid rgba(255,255,255,0.3); border-radius: 8px;"></div>
+                    </div>
+                    <div class="card-face card-front picture-card" style="border-color: ${data.color}">
+                        <svg width="100%" height="100%" viewBox="0 0 200 280" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="200" height="280" fill="${data.color}" opacity="0.1"/>
+                            <text x="100" y="140" text-anchor="middle" font-family="DM Serif Display" font-size="16" fill="${data.color}" font-weight="600">${data.theme}</text>
+                            <text x="100" y="165" text-anchor="middle" font-family="Crimson Pro" font-size="11" fill="${data.color}" opacity="0.7">${data.description}</text>
+                        </svg>
+                        <span class="card-label">Imagen #${data.id}</span>
+                    </div>
+                `;
+            }
+            
+            card.addEventListener('click', () => {
+                card.classList.toggle('flipped');
+            });
+            
+            return card;
+        }
+
+        function resetSelection() {
+            selectedWordCard = null;
+            selectedPictureCard = null;
+            currentStep = 1;
+            
+            document.getElementById('wordDeckContainer').classList.remove('hidden');
+            document.getElementById('pictureDeckContainer').classList.add('hidden');
+            document.getElementById('instructions').classList.remove('hidden');
+            document.getElementById('revealBtn').classList.add('hidden');
+            document.getElementById('previewArea').classList.remove('visible');
+            
+            document.getElementById('stepIndicator').style.background = 'var(--sage)';
+            
+            renderWordDeck();
+            updateInstructions();
+        }
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>
